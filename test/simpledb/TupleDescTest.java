@@ -1,6 +1,7 @@
 package simpledb;
 
 import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -167,6 +168,113 @@ public class TupleDescTest extends SimpleDbTestBase {
         assertFalse(intString.equals(singleInt2));
     }
 
+    /**
+     *  Test one prarmeter constructor,
+     *      it should set the filed name to null.
+     */
+    @Test public void new_oneParamsConTest() {
+        int[] lengths = new int[] { 1, 2, 1000 };
+
+        for (int len : lengths) {
+            TupleDesc td = Utility.getTupleDesc(len);
+            for (int i = 0; i < len; i++) {
+                assertEquals(null, td.getFieldName(i));
+            }
+        }
+    }
+
+    @Test public void new_iteratorTest() {
+        int[] lengths = new int[] { 1, 2, 1000 };
+
+        for (int len : lengths) {
+            TupleDesc td = Utility.getTupleDesc(len);
+            Iterator<TupleDesc.TDItem> i = td.iterator();
+            while (i.hasNext()) {
+                TupleDesc.TDItem item = i.next();
+                assertEquals(Type.INT_TYPE, item.fieldType);
+                assertEquals(null, item.fieldName);
+            }
+        }
+    }
+
+    @Test public void new_getFieldNameTest() {
+        int length = 100;
+        String name = "td";
+        TupleDesc td = Utility.getTupleDesc(length, name);
+
+        // Lower than index bound.
+        try {
+            td.getFieldName(length + 1);
+            fail ("expected exception");
+        } catch (NoSuchElementException e) {
+        }
+
+        // Higher than index bound.
+        try {
+            td.getFieldName(-1);
+            fail ("expected exception");
+        } catch (NoSuchElementException e) {
+        }
+
+        // Check each name.
+        for (int i = 0; i < length; i++) {
+            assertEquals(name+i, td.getFieldName(i));
+        }
+    }
+
+    @Test public void new_getFieldTypeTest() {
+        int length = 100;
+        String name = "td";
+        TupleDesc td = Utility.getTupleDesc(length, name);
+
+        // Lower than index bound.
+        try {
+            td.getFieldType(length + 1);
+            fail ("expected exception");
+        } catch (NoSuchElementException e) {
+        }
+
+        // Higher than index bound.
+        try {
+            td.getFieldType(-1);
+            fail ("expected exception");
+        } catch (NoSuchElementException e) {
+        }
+
+        // Check each name.
+        for (int i = 0; i < length; i++) {
+            assertEquals(Type.INT_TYPE, td.getFieldType(i));
+        }
+    }
+
+    @Test public void new_fieldNameToIndexTest() {
+        Type[] typeAr = new Type[] { Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE };
+        String[] fieldAr = new String[] { "number0", "number1", "number0" };
+        TupleDesc td = new TupleDesc(typeAr, fieldAr);
+
+        // Throw exception if name not exist.
+        try {
+            td.fieldNameToIndex("a_not_existing_name");
+            fail ("expected exception");
+        } catch (NoSuchElementException e) {
+        }
+
+        assertEquals(1, td.fieldNameToIndex("number1"));
+        
+        // Return the first if duplicated names exist.
+        assertEquals(0, td.fieldNameToIndex("number0"));
+    }
+
+    // Test mix of INT_TYPE and STRING_TYPE.
+    @Test public void new_getSizeTest() {
+        Type[] typeAr = new Type[] { Type.INT_TYPE, Type.INT_TYPE, Type.STRING_TYPE, Type.STRING_TYPE };
+        String[] fieldAr = new String[] { "number0", "number1", "string0", "string1" };
+        TupleDesc td = new TupleDesc(typeAr, fieldAr);
+
+        int length = 2 * Type.INT_TYPE.getLen() + 2 * Type.STRING_TYPE.getLen();
+        assertEquals(length, td.getSize());
+    }
+    
     /**
      * JUnit suite target
      */
