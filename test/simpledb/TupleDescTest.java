@@ -178,7 +178,7 @@ public class TupleDescTest extends SimpleDbTestBase {
         for (int len : lengths) {
             TupleDesc td = Utility.getTupleDesc(len);
             for (int i = 0; i < len; i++) {
-                assertEquals(null, td.getFieldName(i));
+                assertEquals("", td.getFieldName(i));
             }
         }
     }
@@ -192,7 +192,7 @@ public class TupleDescTest extends SimpleDbTestBase {
             while (i.hasNext()) {
                 TupleDesc.TDItem item = i.next();
                 assertEquals(Type.INT_TYPE, item.fieldType);
-                assertEquals(null, item.fieldName);
+                assertEquals("", item.fieldName);
             }
         }
     }
@@ -263,6 +263,11 @@ public class TupleDescTest extends SimpleDbTestBase {
         
         // Return the first if duplicated names exist.
         assertEquals(0, td.fieldNameToIndex("number0"));
+
+        String[] nullFieldAr = new String[] { null, null, null };
+        TupleDesc nullTD = new TupleDesc(typeAr, nullFieldAr);
+
+        assertEquals(0, nullTD.fieldNameToIndex(null)); // Field name can be set to null manually.
     }
 
     // Test mix of INT_TYPE and STRING_TYPE.
