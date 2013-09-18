@@ -1,7 +1,7 @@
 package simpledb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
+import junit.framework.Assert;
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Before;
@@ -33,7 +33,6 @@ public class RecordIdTest extends SimpleDbTestBase {
     @Test public void getPageId() {
         HeapPageId hpid = new HeapPageId(-1, 2);
         assertEquals(hpid, hrid.getPageId());
-
     }
 
     /**
