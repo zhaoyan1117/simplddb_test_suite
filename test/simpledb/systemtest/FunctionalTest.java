@@ -44,7 +44,7 @@ public class FunctionalTest extends SimpleDbTestBase {
     }
 
     /**
-     * SELECT count(*) FROM ...
+     * SELECT count(*) FROM data.dat
      */
     @Test public void new_CountTest() {
         try {
@@ -63,6 +63,9 @@ public class FunctionalTest extends SimpleDbTestBase {
         }
     }
 
+    /**
+     * SELECT count(*) FROM emptyFile.dat
+     */
     @Test public void new_CountZeroTest() {
         try {
             int count = 0;
