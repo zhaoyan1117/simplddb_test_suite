@@ -1,6 +1,6 @@
 package simpledb;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.NoSuchElementException;
 
@@ -13,6 +13,9 @@ import org.junit.Test;
 import simpledb.TestUtil.SkeletonFile;
 import simpledb.systemtest.SimpleDbTestBase;
 import simpledb.systemtest.SystemTestUtil;
+
+import java.util.*;
+import java.io.*;
 
 public class CatalogTest extends SimpleDbTestBase {
     private static String name = "test";
@@ -67,6 +70,63 @@ public class CatalogTest extends SimpleDbTestBase {
         // rely on HeapFileTest for that. perform some basic checks.
         assertEquals(-1, f.getId());
     }
+
+    @Test public void new_getTupleDescTest() throws Exception {
+        try {
+            Database.getCatalog().getTupleDesc(100);
+            Assert.fail("Should not find TupleDesc with id " + 100);
+        } catch (NoSuchElementException e) {}
+    }
+
+    @Test public void new_getDbFileTest() throws Exception {
+        try {
+            Database.getCatalog().getDbFile(100);
+            Assert.fail("Should not find DbFile with id " + 100);
+        } catch (NoSuchElementException e) {}
+    }
+
+    @Test public void new_getPrimaryKeyTest() {
+        String k = "key";
+        Database.getCatalog().addTable(new SkeletonFile(-3, Utility.getTupleDesc(2)), "table1", k);
+
+        String result = Database.getCatalog().getPrimaryKey(-3);
+        assertEquals(k, result);
+    }
+
+    @Test public void new_getTableNameTest() {
+        String name = "name1";
+        Database.getCatalog().addTable(new SkeletonFile(-4, Utility.getTupleDesc(2)), name);
+
+        String result = Database.getCatalog().getTableName(-4);
+
+        assertEquals(name, result);
+    }
+
+    @Test public void new_clearTest() {
+        Database.getCatalog().clear();
+        try {
+            Database.getCatalog().getDbFile(-1);
+            Assert.fail("Should file since catalog is cleared.");
+        } catch (NoSuchElementException e){}
+
+        try {
+            Database.getCatalog().getPrimaryKey(-2);
+            Assert.fail("Should file since catalog is cleared.");
+        } catch (NoSuchElementException e){}
+    }
+
+    @Test public void new_tableIteratorTest() {
+        Iterator<Integer> i = Database.getCatalog().tableIdIterator();
+
+        int count = 0;
+        while (i.hasNext()) {
+            count++;
+            i.next();
+        }
+
+        assertEquals(2, count);
+    }
+
 
     /**
      * JUnit suite target
