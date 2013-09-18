@@ -1,11 +1,14 @@
 package simpledb;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
 import simpledb.systemtest.SimpleDbTestBase;
+
+import java.io.*;
+import java.util.*;
 
 public class TupleTest extends SimpleDbTestBase {
 
@@ -55,6 +58,52 @@ public class TupleTest extends SimpleDbTestBase {
     			"RecordId.equals() not being implemented.  This is not required for Lab 1, " +
     			"but should pass when you do implement the RecordId class.");
 	}
+    }
+
+    @Test public void new_toStringTest() {
+        int length = 10;
+        String name = "td";
+        Tuple t = new Tuple(Utility.getTupleDesc(length, name));
+
+        String tString = t.toString();
+
+        // Last character should be \n.
+        assertEquals("\n", tString.substring(tString.length()-1));
+        
+        // Only last character is \n.
+        assertFalse(tString.substring(0, tString.length()-1).contains("\n"));
+
+        // Split string on any white character.
+        String[] tStringAr = tString.substring(0, tString.length()-1).split("\\s+");
+        assertEquals(length, tStringAr.length);        
+    }
+
+    @Test public void new_fieldsTest() {
+        int length = 10;
+        String name = "td";
+        Tuple t = new Tuple(Utility.getTupleDesc(length, name));
+
+        Iterator<Field> fs = t.fields();
+
+        int i = 0;
+        while (fs.hasNext()) {
+            i++;
+            fs.next();
+        }
+
+        assertEquals(length, i);
+    }
+
+    /**
+     * Helper class for iterator test.
+     */
+    private class TestField implements Field {
+        public void serialize(DataOutputStream dos) throws IOException {}
+        public boolean compare(Predicate.Op op, Field value) { return false; }
+        public Type getType() { return null; }
+        public int hashCode() { return 0; }
+        public boolean equals(Object field) { return false; }
+        public String toString() { return null; }
     }
 
     /**
