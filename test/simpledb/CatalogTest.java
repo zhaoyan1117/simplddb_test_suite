@@ -110,7 +110,7 @@ public class CatalogTest extends SimpleDbTestBase {
         } catch (NoSuchElementException e){}
 
         try {
-            Database.getCatalog().getPrimaryKey(-2);
+            Database.getCatalog().getTupleDesc(-2);
             Assert.fail("Should file since catalog is cleared.");
         } catch (NoSuchElementException e){}
     }
