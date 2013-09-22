@@ -97,6 +97,7 @@ public class TupleTest extends SimpleDbTestBase {
         int length = 10;
         String name = "td";
         Tuple t = new Tuple(Utility.getTupleDesc(length, name));
+        for (int i = 0; i < length; i++) { t.setField(i, new TestField(Type.INT_TYPE)); }
 
         Iterator<Field> fs = t.fields();
 
