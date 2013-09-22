@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 import simpledb.systemtest.SimpleDbTestBase;
 
@@ -60,11 +61,24 @@ public class TupleTest extends SimpleDbTestBase {
 	}
     }
 
+    /*
+     * Test when the given field type is wrong.
+     */
+    @Test public void new_setFieldTest() {
+        int length = 10;
+        String name = "td";
+        Tuple t = new Tuple(Utility.getTupleDesc(length, name));
+        try {
+            t.setField(0, new TestField(Type.STRING_TYPE));
+            Assert.fail("Should throw a RuntimeException.");
+        } catch (RuntimeException e) {}
+    }
+
     @Test public void new_toStringTest() {
         int length = 10;
         String name = "td";
         Tuple t = new Tuple(Utility.getTupleDesc(length, name));
-        for (int i = 0; i < length; i++) { t.setField(i, new TestField()); }
+        for (int i = 0; i < length; i++) { t.setField(i, new TestField(Type.INT_TYPE)); }
 
         String tString = t.toString();
 
@@ -99,9 +113,11 @@ public class TupleTest extends SimpleDbTestBase {
      * Helper class for iterator test.
      */
     private class TestField implements Field {
+        private Type t;
+        public TestField(Type t) {this.t = t;}
         public void serialize(DataOutputStream dos) throws IOException {}
         public boolean compare(Predicate.Op op, Field value) { return false; }
-        public Type getType() { return null; }
+        public Type getType() { return this.t; }
         public int hashCode() { return 0; }
         public boolean equals(Object field) { return false; }
         public String toString() { return "TestField"; }
