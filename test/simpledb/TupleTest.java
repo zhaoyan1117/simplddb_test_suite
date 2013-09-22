@@ -64,6 +64,7 @@ public class TupleTest extends SimpleDbTestBase {
         int length = 10;
         String name = "td";
         Tuple t = new Tuple(Utility.getTupleDesc(length, name));
+        for (int i = 0; i < length; i++) { t.setField(i, new TestField()); }
 
         String tString = t.toString();
 
@@ -103,7 +104,7 @@ public class TupleTest extends SimpleDbTestBase {
         public Type getType() { return null; }
         public int hashCode() { return 0; }
         public boolean equals(Object field) { return false; }
-        public String toString() { return null; }
+        public String toString() { return "TestField"; }
     }
 
     /**
