@@ -267,7 +267,11 @@ public class TupleDescTest extends SimpleDbTestBase {
         String[] nullFieldAr = new String[] { null, null, null };
         TupleDesc nullTD = new TupleDesc(typeAr, nullFieldAr);
 
-        assertEquals(0, nullTD.fieldNameToIndex(null)); // Field name can be set to null manually.
+        try {
+            nullTD.fieldNameToIndex(null);
+            fail ("should raise NoSuchElementException upon a null search!");
+        } catch (NoSuchElementException e) {
+        }
     }
 
     // Test mix of INT_TYPE and STRING_TYPE.
