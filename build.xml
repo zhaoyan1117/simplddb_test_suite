@@ -238,9 +238,6 @@
     </target>
 
     <target name="check_test_versions">
-        <!-- default set latest_version to error message. -->
-        <property name="latest_version" value="Cannot get latest version from github, pls check your internet connection in vm."/>
-        
         <!-- Get the latest version number of the test suite -->
         <get src="https://raw.github.com/zhaoyan1117/simplddb_test_suite/master/VERSION" dest="latest_version" 
             ignoreerrors="true" verbose="off"/>
