@@ -144,6 +144,7 @@
     </target>
 
     <target name="test" depends="testcompile" description="Run all unit tests">
+        <antcall target="check_test_versions"/>
         <RunJunit>
             <batchtest>
                 <fileset dir="${build.test}">
@@ -156,6 +157,7 @@
     </target>
 
     <target name="systemtest" depends="testcompile" description="Run all system tests">
+        <antcall target="check_test_versions"/>
         <RunJunit>
             <batchtest>
                 <fileset dir="${build.test}">
@@ -167,6 +169,7 @@
 
     <target name="runtest" depends="testcompile"
             description="Runs the test you specify on the command line with -Dtest=">
+        <antcall target="check_test_versions"/>
         <!-- Check for -Dtest command line argument -->
         <fail unless="test" message="You must run this target with -Dtest=TestName"/>
 
@@ -183,6 +186,7 @@
 
     <target name="runsystest" depends="testcompile"
             description="Runs the system test you specify on the command line with -Dtest=">
+        <antcall target="check_test_versions"/>
         <!-- Check for -Dtest command line argument -->
         <fail unless="test" message="You must run this target with -Dtest=TestName"/>
 
@@ -200,6 +204,7 @@
     <!-- The following target is used for automated grading. -->
     <target name="test-report" depends="testcompile"
             description="Generates HTML test reports in ${test.reports}">
+        <antcall target="check_test_versions"/>
         <mkdir dir="${test.reports}"/>
 
         <!-- do not halt on failure so we always produce HTML reports. -->
@@ -230,6 +235,24 @@
         <tar destfile="lab-handin.tar.bz2" compression="bzip2"
             basedir="." />
         <echo message="Tarball created!  Please submit 'lab-handin.tar.bz2' per the instructions in the lab document." />
+    </target>
+
+    <target name="check_test_versions">
+        <!-- default set latest_version to error message. -->
+        <property name="latest_version" value="Cannot get latest version from github, pls check your internet connection in vm."/>
+        
+        <!-- Get the latest version number of the test suite -->
+        <get src="https://raw.github.com/zhaoyan1117/simplddb_test_suite/master/VERSION" dest="latest_version" 
+            ignoreerrors="true" verbose="off"/>
+        <loadfile property="latest_version" srcFile="latest_version" failonerror="false" quiet="true"/>
+        <delete file="latest_version" quiet="true"/>
+
+        <!-- Get the current version number of this test suite -->
+        <loadfile property="current_version" srcFile="VERSION"/>
+        <echo message="--------------------------------------------------------------"/>
+        <echo message="LATEST VERSION: ${latest_version}"/>
+        <echo message="CURRENT VERSION: ${current_version}"/>
+        <echo message="--------------------------------------------------------------"/>
     </target>
 
     <target name="test-and-handin" depends="test,systemtest,handin"
